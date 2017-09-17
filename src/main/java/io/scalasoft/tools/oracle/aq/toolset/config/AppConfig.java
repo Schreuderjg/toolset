@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
 
@@ -31,9 +32,10 @@ public class AppConfig {
     private String username;
     @Value("${jdbc.password}")
     private String password;
-
     @Autowired
-    private AQJmsMessageDispatcher aqJmsMessageDispatcher;
+    private JmsTemplate jmsTemplate;
+    @Autowired
+    private CustomProperties properties;
 
     @Bean
     public DataSource dataSource() throws SQLException {
@@ -66,6 +68,6 @@ public class AppConfig {
 
     @Bean
     public AQJmsMessageDispatcher messageDispatcher() {
-        return aqJmsMessageDispatcher;
+        return new AQJmsMessageDispatcher(jmsTemplate, properties);
     }
 }
