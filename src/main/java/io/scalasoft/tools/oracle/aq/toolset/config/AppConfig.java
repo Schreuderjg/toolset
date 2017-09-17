@@ -1,9 +1,13 @@
 package io.scalasoft.tools.oracle.aq.toolset.config;
 
+import io.scalasoft.tools.oracle.aq.toolset.dispatcher.AQJmsMessageDispatcher;
+import io.scalasoft.tools.oracle.aq.toolset.properties.CustomProperties;
 import oracle.jdbc.pool.OracleDataSource;
 import oracle.jms.AQjmsFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
@@ -19,6 +23,7 @@ import java.sql.SQLException;
 
 @Configuration
 @EnableJms
+@EnableConfigurationProperties(CustomProperties.class)
 public class AppConfig {
     @Value("${jdbc.url}")
     private String url;
@@ -26,6 +31,9 @@ public class AppConfig {
     private String username;
     @Value("${jdbc.password}")
     private String password;
+
+    @Autowired
+    private AQJmsMessageDispatcher aqJmsMessageDispatcher;
 
     @Bean
     public DataSource dataSource() throws SQLException {
@@ -54,5 +62,10 @@ public class AppConfig {
     @Bean
     public MessageConverter messageConverter() {
         return new SimpleMessageConverter();
+    }
+
+    @Bean
+    public AQJmsMessageDispatcher messageDispatcher() {
+        return aqJmsMessageDispatcher;
     }
 }
